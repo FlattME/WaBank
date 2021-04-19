@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+<meta charset="UTF-8">
+<h2 align="center">Поддержка</h2>
+
+<form action="" method="post"  style="padding-bottom: 60px;">
+
+
+    <a class="btn btn-primary" href="/directions/support/support_question">Написать в техподдержку</a>
+
+    
+</form>
+    <div id="accordion">
+
+      <div class="card">
+        <div class="card-header" id="headingO">
+          <h5 class="mb-0">
+            <button class="btn btn-link" data-toggle="collapse" data-target="#collapseO" aria-expanded="false" aria-controls="collapseO">
+              Как зарегистрироваться на сайте? 
+            </button>
+          </h5>
+        </div>
+    
+        <div id="collapseO" class="collapse" aria-labelledby="headingO" data-parent="#accordion">
+          <div class="card-body">
+              Чтобы зарегистрироваться надо открыть вкладку "Войти" далее "Регистрация" и заполнить форму.
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" id="headinge">
+          <h5 class="mb-0">
+            <button class="btn btn-link" data-toggle="collapse" data-target="#collapsee" aria-expanded="false" aria-controls="collapsee">
+              Как авторизироваться на сайте? 
+            </button>
+          </h5>
+        </div>
+    
+        <div id="collapsee" class="collapse" aria-labelledby="headinge" data-parent="#accordion">
+          <div class="card-body">
+              Чтобы авторизироваться надо открыть вкладку "Войти" далее ввести почту и пароль.
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" id="headingOne">
+          <h5 class="mb-0">
+            <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+              Как оформлять карту? 
+            </button>
+          </h5>
+        </div>
+    
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+          <div class="card-body">
+              Чтобы оформить карту надо зарегистрироваться на сайте. Открыть вкладку карты/ и заполнить форму.
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" id="headingTwo">
+          <h5 class="mb-0">
+            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              Как переводить деньги? 
+            </button>
+          </h5>
+        </div>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+          <div class="card-body">
+              Чтобы переводить деньги надо зарегистрироваться на сайте и оформить карту. Далее надо окрыть вклудку аккаунт/переводы и заполнить форму. 
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" id="headingThree">
+          <h5 class="mb-0">
+            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+              Как пополнить баланс? 
+            </button>
+          </h5>
+        </div>
+        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+          <div class="card-body">
+              Чтобы пополнить баланс надо зарегистрироваться на сайте и оформить карту. Далее надо окрыть вклудку аккаунт/пополнение баланса и заполнить форму.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+{% endblock %}

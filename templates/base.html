@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css" integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
+    
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,700;1,400;1,600&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{ url_for( 'static', filename='css/style.css', v=1)}}" >
+    
+    
+    <title>Walmurt</title>
+</head>
+<body>
+    <header role="banner">
+            <div class="menu">
+
+                <div class="left">
+                    <div class="logo"><a href="/index" class="djc">Walmurt Bank</a></div>
+                </div>
+                <br>
+
+                <div class="scripts">
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.admin %}
+                        <hr style="transform: rotate(90deg); color: #fff;width: 6%;
+                        height: 2px;">
+                            <div class="scripts__item">
+                                <div class="scripts__title">
+                                    <div class="scripts__btn"><a href="/admin" class="dj"> Управление </a></div>
+                                </div>
+                            </div>
+                            <hr style="transform: rotate(90deg); color: #fff;width: 6%;
+                            height: 2px;">
+                        {% else %}
+                            {% for key, value in options.items() %}
+                            <hr style="transform: rotate(90deg); color: #fff;width: 6%;
+                        height: 2px;">
+                        
+                                {% if 'Карты' == key %}
+                                    <div class="btn-group dropdown">
+                                        <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dj">
+                                            {{ key }}
+                                        </button>
+                                        
+                                        
+                                        <div class="dropdown-menu">
+                                            <div class="debut_cards_">
+                                                <a class="btn btn-primary" href="{{ url_for('debut_cards') }}">Дебютовые карты</a>
+                                            </div>
+                                            <div class="pension_cards_">
+                                                <a class="btn btn-primary" href="{{ url_for('pension_cards') }}">Пенсионные карты</a>
+                                            </div>
+                                            <div class="credit_cards_">
+                                                <a class="btn btn-primary" href="{{ url_for('credit_cards') }}">Кредитные карты</a>
+                                            </div>
+                                        
+                                        </div>
+                                        {% if loop.last  %}
+                        <hr style="transform: rotate(90deg); color: #fff;width: 6%;
+                        height: 2px;">
+                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    <div class="scripts__btn"><a href={{ value }} class="dj"> {{ key }} </a></div>
+                                {% endif %}
+                               
+                                
+                            {% endfor %}
+                        {% endif %}
+
+                    {% else %}
+                        {% for key, value in options.items() %}
+                        <hr style="transform: rotate(90deg); color: #fff;width: 6%;
+                        height: 2px;">
+                        <div class="scripts__item">
+                            <div class="scripts__title">
+                                {% if 'Карты' == key %}
+                                    <div class="btn-group dropdown">
+                                        <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dj">
+                                            {{ key }}
+                                        </button>
+                                        
+                                        
+                                        <div class="dropdown-menu">
+                                            <div class="debut_cards_">
+                                                <a class="btn btn-primary" href="{{ url_for('debut_cards') }}">Дебютовые карты</a>
+                                            </div>
+                                            <div class="pension_cards_">
+                                                <a class="btn btn-primary" href="{{ url_for('pension_cards') }}">Пенсионные карты</a>
+                                            </div>
+                                            <div class="credit_cards_">
+                                                <a class="btn btn-primary" href="{{ url_for('credit_cards') }}">Кредитные карты</a>
+                                            </div>
+                                        
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="scripts__btn"><a href={{ value }} class="dj"> {{ key }} </a></div>
+                                {% endif %}
+                            </div>
+                            {% if loop.last  %}
+                        <hr style="transform: rotate(90deg); color: #fff;width: 6%;
+                        height: 2px;">
+                        {% endif %}
+                        </div>
+                        
+                        
+                        
+                        {% endfor %}
+                    {% endif %}
+
+                </div>
+
+                <br>
+
+                <div class="right">
+                    {% if current_user.is_authenticated %}
+                        
+                       <!-- Default dropright button -->
+                        <div class="btn-group dropright">
+                            <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="
+                            background: lavender;">
+                                <i class="fas fa-user-alt" style="font-size: 16px;"></i>
+                            </button>
+                            
+                            <div class="dropdown-menu">
+                                {% if not current_user.admin %}
+                                    <div class="my_cards">
+                                        <a class="btn btn-primary" href="/account/account_cards">Мои карты</a>
+                                    </div>
+                                    <div class="logout">
+                                        <a class="btn btn-primary" href="/account/top_up"> Пополнение баланса </a>
+                                    </div>
+                                
+                                    <div class="transfers">
+                                        <a class="btn btn-primary" href="/account/transfers"> Переводы </a>
+                                    </div>
+                                    <div class='pay_off_credit'>
+                                        <a class="btn btn-primary" href="/directions/credits/pay_off_credit"> Погашение кредита </a>
+                                    </div>
+                                {% endif %}
+                                <div class="logout">
+                                    <a class="btn btn-primary" href="/logout"> Выйти </a>
+                                </div>
+                            
+                            </div>
+                        </div>
+
+                    {% else %}
+                    <p style="padding: 0 20px; margin: 4px;">
+                        <a class="btn btn-success" href="/login">Войти</a>
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+
+    </header>
+    <main role="main" class="container">
+    {% block content %}{% endblock %}
+    </main>
+    <footer role="contentinfo">
+        <div class="sup" style="display: block; margin: 10px 30px;">
+            <a href="/directions/support" style="color: #fff; text-decoration: none;">техподдержка</a>
+            <div class="address" style="width: 100%; padding-top: 20px; font-size: 16px;">Адрес WaBack: г. Москва, 123123, ул. Октябрьская, д. 1, стр. 1.</div>
+        </div>
+        <div class="con" style="right: 0; margin: 10px 30px;" >
+            <div class="footer_mail" style="font-size: 16px; width: 100%; padding-bottom: 20px;">Почта банка: bbwabank2020suppor720@yandex.ru</div>
+            <div class="footer_tel" style="font-size: 16px;">Телефон банка: 88005553535</div>
+        </div>
+        
+    </footer>
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+
+</html>

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Личный кабинет</h1>
+
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    {{ form.csrf_token }}
+    <div class="my_cards">
+        <a class="btn btn-primary" href="/account/account_cards">Мои карты</a>
+    </div>
+    <div class="logout">
+        <a class="btn btn-primary" href="/account/top_up"> Пополнение баланса </a>
+    </div>
+
+    <div class="transfers">
+        <a class="btn btn-primary" href="/account/transfers"> Переводы </a>
+    </div>
+    <div class="logout">
+        <a class="btn btn-primary" href="/logout"> Выйти </a>
+    </div>
+</form>
+{% endblock %}

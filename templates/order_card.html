@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="../static/css/style.css">
+<h1>Оформление дебютовой карты</h1>
+
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    {{ form.csrf_token }}
+    <p>
+        {{ form.fio.label }}<br>
+        {{ form.fio(class="form-control") }}<br>
+        {% for error in form.fio.errors %}
+        <p class="alert alert-danger" role="alert">
+            {{ error }}
+        </p>
+       {% endfor %}
+    </p>
+
+    <p>
+        {{ form.tel.label }}<br>
+        {{ form.tel(class="form-control") }}<br>
+        {% for error in form.tel.errors %}
+        <p class="alert alert-danger" role="alert">
+            {{ error }}
+        </p>
+       {% endfor %}
+    </p>
+
+    <p>
+        {{ form.nomer.label }}<br>
+        {{ form.nomer(class="form-control") }}<br>
+        {% for error in form.nomer.errors %}
+        <p class="alert alert-danger" role="alert">
+            {{ error }}
+        </p>
+       {% endfor %}
+    </p>
+
+    <p>
+        {{ form.vidan.label }}<br>
+        {{ form.vidan(class="form-control") }}<br>
+        {% for error in form.vidan.errors %}
+        <p class="alert alert-danger" role="alert">
+            {{ error }}
+        </p>
+       {% endfor %}
+    </p>
+
+    <p>{{ form.add_card(type="submit", class="btn btn-primary") }}</p>
+    {{message}}
+</form>
+{% endblock %}

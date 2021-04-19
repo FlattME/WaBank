@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+<meta charset="UTF-8">
+<div class="credit__form">
+    <h2 align="center">Кридиты</h2>
+    <div class="table_container" align="center" style="font-size: 18px;"> Самые назкие проценты среди конкурентов только в нашем банке</div>
+
+    <div class="card_item">
+        <div class="prof">
+            <div class="prof__item">
+                <div class="prof__title">Сумма кредита</div>
+                до 50000 ₽
+            </div>
+
+            <div class="prof__item">
+                <div class="prof__title">Ставка</div>
+                от 14 %
+            </div>
+
+            <div class="prof__item">
+                <div class="prof__title">Оформление кредита</div>
+                до 10 мин.
+            </div>
+
+        </div>
+        <div class="credit__btn" style="padding: 20px;">
+            <a href="{{ url_for('order_credit', percent='15', nonpercent='0', monthly_percent='7') }}" class="btn btn-primary">Оформить кредит</a>
+        </div>
+    </div>
+
+    <div class="card_item">
+        <div class="prof">
+            <div class="prof__item">
+                <div class="prof__title">Сумма кредита</div>
+                до 25000 ₽
+            </div>
+
+            <div class="prof__item">
+                <div class="prof__title">Ставка</div>
+                от 17 %
+            </div>
+
+            <div class="prof__item">
+                <div class="prof__title">Беспроцентный период </div>
+                30 дней 
+            </div>
+
+
+            <div class="prof__item">
+                <div class="prof__title">Оформление кредита</div>
+                до 10 мин.
+            </div>
+
+        </div>
+        <div class="credit__btn" style="padding: 20px;">
+            <a href="{{ url_for('order_credit', percent='17', nonpercent='1', monthly_percent='7') }}" class="btn btn-primary">Оформить кредит</a>
+        </div>
+    </div>
+
+
+    <div class="card_item">
+        <div class="prof">
+            <div class="prof__item">
+                <div class="prof__title">Сумма кредита</div>
+                до 100000 ₽
+            </div>
+
+            <div class="prof__item">
+                <div class="prof__title">Ставка</div>
+                от 13 %
+            </div>
+
+            <div class="prof__item">
+                <div class="prof__title">Беспроцентный период </div>
+                60 дней 
+            </div>
+
+            <div class="prof__item">
+                <div class="prof__title">Оформление кредита</div>
+                до 10 мин.
+            </div>
+        </div>
+        <div class="credit__btn" style="padding: 20px;">
+            <a href="{{ url_for('order_credit', percent='13', nonpercent='2', monthly_percent='3') }}" class="btn btn-primary">Оформить кредит</a>
+        </div>
+    </div>
+
+</div>
+<br>
+
+{% endblock %}

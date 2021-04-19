@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block content %}
+<meta charset="UTF-8">
+<h2 align="center">Кредитные карты</h2>
+<div class="table_container">
+    <div class="cards">
+        <div class="card_item">
+            <div class="prof">
+                <div class="prof__item">
+                    <div class="prof__title">Сумма кредита</div>
+                    50000 ₽
+                </div>
+    
+                <div class="prof__item">
+                    <div class="prof__title">Ставка</div>
+                    от 12 %
+                </div>
+
+                <div class="prof__item">
+                    <div class="prof__title">Беспроцентный период </div>
+                    30 дней 
+                </div>
+
+                <div class="prof__item">
+                    <div class="prof__title"> Срок </div>
+                    до двух лет 
+                </div>
+    
+                <div class="prof__item">
+                    <div class="prof__title"> Быстрое оформление </div>
+                    до 10 мин.
+                </div>
+
+            </div>
+            <div class="cards__item">
+                <a class="btn btn-success" href="{{ url_for('order_credit_card', sum_='50000',  percent='12', nonpercent='5', monthly_percent='3', term='24') }}">Заказать карту</a>
+            </div>
+        </div>
+    
+        <div class="card_item">
+            <div class="prof">
+                <div class="prof__item">
+                    <div class="prof__title">Сумма кредита</div>
+                    до 25000 ₽
+                </div>
+    
+                <div class="prof__item">
+                    <div class="prof__title">Ставка</div>
+                    от 17 %
+                </div>
+    
+                <div class="prof__item">
+                    <div class="prof__title">Беспроцентный период </div>
+                    30 дней 
+                </div>
+
+                <div class="prof__item">
+                    <div class="prof__title"> Срок </div>
+                    до пяти лет 
+                </div>
+    
+                <div class="prof__item">
+                    <div class="prof__title"> Быстрое оформление </div>
+                    до 10 мин.
+                </div>
+    
+            </div>
+            <div class="cards__item">
+                <a class="btn btn-success" href="{{ url_for('order_credit_card', sum_='200000',  percent='11', nonpercent='5', monthly_percent='3', term='60') }}">Заказать карту</a>
+            </div>
+        </div>
+    
+    
+        <div class="card_item">
+            <div class="prof">
+                <div class="prof__item">
+                    <div class="prof__title">Сумма кредита</div>
+                    20000 ₽
+                </div>
+    
+                <div class="prof__item">
+                    <div class="prof__title">Ставка</div>
+                    от 18 %
+                </div>
+    
+                <div class="prof__item">
+                    <div class="prof__title">Беспроцентный период </div>
+                    60 дней 
+                </div>
+
+                <div class="prof__item">
+                    <div class="prof__title"> Срок </div>
+                    до трех лет 
+                </div>
+    
+                <div class="prof__item">
+                    <div class="prof__title"> Быстрое оформление </div>
+                    до 10 мин.
+                </div>
+            </div>
+            <div class="cards__item">
+                <a class="btn btn-success" href="{{ url_for('order_credit_card', sum_='20000',  percent='18', nonpercent='5', monthly_percent='3', term='36') }}">Заказать карту</a>
+            </div>
+        </div>
+    
+    </div>
+</div>
+<br>
+
+{% endblock %}

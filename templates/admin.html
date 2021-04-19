@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Погашение кредита</h1>
+
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    {{ form.csrf_token }}
+    <p>{{ form.check_credits_and_contributions(type="submit", class="btn btn-primary") }}</p>
+    {{ message }}
+    <div class="users">
+        {% for user in users %}
+            <div class="usr_info" style="padding-top: 10px;">{{ user[0] }} {{ user[1] }} {{ user[2] }} {{ user[3] }} {{ user[4] }} </div>
+        {% endfor %}
+    </div>
+     
+</form>
+{% endblock %}

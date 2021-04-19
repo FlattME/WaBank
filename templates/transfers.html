@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Переводы</h1>
+
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    {{ form.csrf_token }}
+    <div class="transfer" style="display: flex;">
+        <div class="transmitting_input">
+            <div class="dropdown">
+                
+                <div class="form-group">
+                    <label for="email">{{ form.transmitting_input.label }}</label>
+                    {{ form.transmitting_input(class="form-control") }}
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="transmitting_secret_code">
+            <label for="email">{{ form.transmitting_secret_code.label  }}</label>
+            {{ form.transmitting_secret_code(class="form-control", type="transmitting_secret_code") }}<br>
+            {% for error in form.transmitting_secret_code.errors %}
+                <p class="alert alert-danger" role="alert">
+            {{ error }} }}
+            </p>
+
+            {% endfor %}
+        </div>
+
+        <div class="transfer_amount">
+            <label for="email">{{ form.transfer_amount.label  }}</label>
+            {{ form.transfer_amount(class="form-control", type="transfer_amount") }}<br>
+            {% for error in form.transfer_amount.errors %}
+                <p class="alert alert-danger" role="alert">
+            {{ error }} }}
+            </p>
+
+            {% endfor %}
+        </div>
+        
+        
+        <div class="recipient_input">
+            <label for="email">{{ form.recipient_input.label  }}</label>
+            {{ form.recipient_input(class="form-control", type="recipient_input") }}<br>
+            {% for error in form.recipient_input.errors %}
+                <p class="alert alert-danger" role="alert">
+            {{ error }} }}
+            </p>
+
+            {% endfor %}
+        </div>
+    </div>
+
+    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+    {{ message }}
+     
+</form>
+{% endblock %}

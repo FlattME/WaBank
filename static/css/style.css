@@ -1,0 +1,282 @@
+html {
+    height: 100%;
+}
+  
+body {
+    margin: 0;
+    color: #fff;
+    /* Растягиваем body по высоте html */
+    min-height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+}
+
+
+body {
+    margin: 0;
+    line-height: 1.5;
+    font-weight: 500;
+    position: relative;
+    min-height: 100vh;
+    font-family: 'Montserrat', sans-serif;
+    background-color: lavender;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: 0;
+}
+
+
+header {
+    display: block;
+    position: fixed;
+    width: 100%;
+    padding-bottom: 20px;    
+
+}
+
+main {
+    padding-bottom: 80px;
+    color: #1d57b9;
+    font-size: 15px;
+}
+
+footer {
+    width: 100%;
+    height: 100px;
+    display: flex;
+    
+    flex-wrap: wrap;
+    justify-content: space-between;
+    bottom: 0;
+    position: absolute;
+    margin: auto;
+    background: #8388d1;
+}
+
+
+.menu {
+    background: #8388d1;
+    left: 0;
+    top: 0;
+    margin: 0 auto;
+    padding: 8px 8px;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+   
+}
+
+.left {
+    display: flex;
+}
+
+.fa-user-alt:before, .fa-bars {
+    font-size: 24px;
+    cursor: pointer;
+    color: #fff;
+}
+
+.fa-user-alt:before {
+    padding: 0 16px;
+    margin: 0 auto;
+    transition: background .2s linear;
+}
+
+.fa-user-alt:before:hover {
+    background: #8388d1;
+}
+
+.logo {
+    color: #fff;
+    text-decoration: none;
+
+
+    font-size: 32px;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+
+    padding: 0 16px;
+}
+
+.right {
+    margin-left: 8px;
+    display: flex;
+
+    font-size: 26px;
+    
+    color: #fff;
+
+}
+
+.login {
+    cursor: pointer;
+    max-height: 100%;
+    font-weight: 500;
+    padding: 0 20px;
+}
+
+
+body::-webkit-scrollbar {
+    width: 6px;
+}
+
+body::-webkit-scrollbar-track {
+    background: #ffffff;
+}
+
+body::-webkit-scrollbar-thumb {
+    background: #58a89a;
+}
+
+.scripts {
+    display: flex;
+    width: 60%;
+    align-items: center;
+    justify-content: space-between;
+}  
+
+
+
+.scripts__item {
+    color: #fff;
+}
+
+.scripts__title {
+    color: #fff;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.container {
+    padding-top: 100px;
+    padding-bottom: 140px;
+}
+
+.djc {
+    color: #fff;
+    
+    transition: color .1s linear;
+}
+
+
+.dj {
+    background: transparent;
+    color: #fff;
+    border: none;
+    font-size: 20px;
+    font-weight: 500;
+    transition: color .1s linear;
+}
+
+.dj:hover, .djc:hover {
+    text-decoration: none;
+    color: #0f1a63;
+}
+
+.btn-success {
+    width: auto;
+    background-color: transparent;
+    border-color: #add8e6;
+    transition: backgroud .2s linear;
+}
+
+.btn-success:hover, .fa-user:hover {
+    background: #1d57b9;
+}
+
+.btn.btn-link {
+    margin-bottom: 15px;
+    color: #1d57b9;
+    font-size: 20px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.btn.btn-link.collapsed:hover {
+    border: none;
+    text-decoration: none;
+}
+
+.jumbotron {
+    color: #fff;
+    background: #5e59fd;
+}
+
+.btn.btn-primary {
+    font-size: 17px;
+    width: 100%;
+    background: #5e59fd;
+}
+
+.btn-primary {
+    border: #000 2px solid;
+}
+
+.btn-group {
+    margin-left: 0;
+    color: #000;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.dropdown-menu {
+    background: lavender;
+}
+
+h1, h2 {
+    color: #1d57c9;
+    padding-bottom: 30px;
+}
+
+
+.card {
+    background: #fff;
+    border: 2px solid #041e42;
+    margin-bottom: 15px;
+}
+
+.card-body {
+    margin: 20px 20px;
+    color: #1d57b9;
+    font-size: 17px;
+}
+
+a {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #1d57c9;
+}
+
+a:hover {
+    color: #5e59fd;
+
+}
+
+.hrefa {
+    margin-bottom: 20px;
+    padding: 5px 10px;
+    color: #ffffff;
+    border: 1px solid #041e42;
+    background: #041e42;
+}
+
+.card_item {
+    margin-bottom: 20px;
+    padding: 20px;
+    background: #5e59fd;
+    display: flex;
+    color: #fff;
+    justify-content: space-around;
+}
+
+.prof {
+    display: contents;
+    justify-content: space-around;
+}
+
+.prof__title {
+    font-size: 16px;
+    padding-bottom: 10px;
+}

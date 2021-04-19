@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+<meta charset="UTF-8">
+<h2 align="center">Дебютовые карты</h2>
+<div class="table_container">
+    <div class="cards">
+    
+    <div class="card_item">
+        <div class="prof">
+            <div class="prof__item">
+                <div class="prof__title">Цена обслуживания</div>
+                всего 200 ₽
+            </div>
+
+            <div class="prof__item">
+                <div class="prof__title">Переводы без процентов</div>
+                на карты нашего банка
+            </div>
+
+            <div class="prof__item">
+                <div class="prof__title"> Кэшбэк на все покупки </div>
+                3 %
+            </div>
+
+            <div class="prof__item">
+                <div class="prof__title"> Быстрые переводы </div>
+                 до 1 минуты
+            </div>
+        </div>
+        <div class="card__link">
+            <a class="btn btn-success" href="{{ url_for('order_card', service_price='200', privileges='ll:3') }}">Заказать карту</a>
+        </div>
+
+    </div>
+
+    <div class="card_item">
+        <div class="prof">
+            <div class="prof__item">
+                <div class="prof__title">Цена обслуживания</div>
+                0 ₽
+            </div>
+
+            <div class="prof__item">
+                <div class="prof__title">Переводы без процентов</div>
+                на карты нашего банка
+            </div>
+
+            <div class="prof__item">
+                <div class="prof__title"> Быстрые переводы </div>
+                 до 1 минуты
+            </div>
+
+        </div>
+        <div class="card__link">
+            <a class="btn btn-success" href="{{ url_for('order_card', service_price='0', privileges='ll:3') }}">Заказать карту</a>
+        </div>
+
+    </div>
+
+    <div class="card_item">
+        <div class="prof">
+            <div class="prof__item">
+                <div class="prof__title">Цена обслуживания</div>
+                всего 400 ₽
+            </div>
+
+            <div class="prof__item">
+                <div class="prof__title"> Переводы без процентов </div>
+                на карты нашего банка
+            </div>
+
+            <div class="prof__item">
+                <div class="prof__title">  Кэшбэк на все покупки </div>
+                7 %
+            </div>
+
+            <div class="prof__item">
+                <div class="prof__title"> Быстрые переводы </div>
+                 до 1 минуты
+            </div>
+
+        </div>
+        <div class="card__link">
+            <a class="btn btn-success" href="{{ url_for('order_card', service_price='400', privileges='ll:7') }}">Заказать карту</a>
+        </div>
+
+    </div>
+</div>
+<br>
+
+{% endblock %}

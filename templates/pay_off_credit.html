@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Погашение кредита</h1>
+
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    {{ form.csrf_token }}
+    <div class="loan_repayment" style="display: flex;">
+        <div class="pay_off_card">
+            <div class="dropdown">
+                
+                <div class="form-group">
+                    <label for="email">{{ form.pay_off_card.label }}</label>
+                    {{ form.pay_off_card(class="form-control") }}
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="transfer_amount">
+            <label for="email">{{ form.transfer_amount.label  }}</label>
+            {{ form.transfer_amount(class="form-control", type="transfer_amount") }}<br>
+            {% for error in form.transfer_amount.errors %}
+                <p class="alert alert-danger" role="alert">
+            {{ error }} }}
+            </p>
+
+            {% endfor %}
+        </div>
+        
+        <div class="credit_name">
+            <div class="dropdown">
+                
+                <div class="form-group">
+                    <label for="email">{{ form.credit_name.label }}</label>
+                    {{ form.credit_name(class="form-control") }}
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+
+    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+    {{ message }}
+     
+</form>
+{% endblock %}

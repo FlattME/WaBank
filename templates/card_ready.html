@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<meta charset="UTF-8">
+<h2 align="center">Карта готова</h2>
+<div class="table_container" style="font-size: 20px;
+background: #5e59fd;
+color: #fff;
+width: 600px;
+padding: 30px 60px;">
+    <div class="d" style="padding-bottom: 20px;">Запомните данные карты и никому не сообщайте их.</div>
+
+    <div class="card_name">
+        Название: {{ card_name }}
+    </div>
+    <div class="card_info">
+        {% if 'Кредит' in card_name %}
+            {% if 'Кредит ' in card_name %} 
+                <div class="card_number">
+                    Сумма кредита: {{ sum_ }}
+                    
+                </div>
+                <div class="card_pin" style="display: contents;">
+                    Ежемесячная оплата: {{ credit_payment }}
+                    Процент: {{ percent }}
+                </div>
+            {% else %}
+                <div class="card_number">
+                    Номер карты: {{ card_number }}
+                    
+                </div>
+                <div class="card_pin" style="display: contents;">
+                    Пин код {{ card_pin }}
+                    Код безопасности: {{ secret_code}}
+                </div>
+                <div class="card_number">
+                    Сумма кредита: {{ sum_ }}
+                    
+                </div>
+                <div class="card_pin" style="display: contents;">
+                    Ежемесячная оплата: {{ credit_payment }}
+                    Процент: {{ percent }}
+                </div>
+            {% endif %}
+        {% elif 'Вклад' in card_name %}
+            <div class="card_pin" style="display: contents;">
+                Ежемесячный доход : {{ income_ }}
+                Процент: {{ percent }}
+            </div>
+            
+        {% else %}
+            <div class="card_number">
+                Номер карты: {{ card_number }}
+                
+            </div>
+            <div class="card_pin" style="display: contents;">
+                Пин код {{ card_pin }}
+                Код безопасности: {{ secret_code}}
+            </div>
+        {% endif %}
+        <div class="modifed_date">
+            Годен до: {{ modifed_date }}
+        </div>
+    </div>
+<br>
+
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<meta charset="UTF-8">
+<div class="contribution__form">
+    <h2 align="center">Вклады</h2>
+    <div class="inform" align="center" style="font-size: 18px;">Вклад с максимальной доходностью на короткий срок</div>
+
+    {{ message }}
+
+    <div class="card_item">
+        <div class="prof">
+            <div class="prof__item">
+                <div class="prof__title">Сумма вклада</div>
+                до 50000 ₽
+            </div>
+
+            <div class="prof__item">
+                <div class="prof__title">Ставка</div>
+                5 %
+            </div>
+
+            <div class="prof__item">
+                <div class="prof__title">Оформление вклада</div>
+                до 10 мин
+            </div>
+
+        </div>
+        <div class="credit__btn" style="padding: 20px;">
+            <a href="{{ url_for('order_contribution', percent='5', m='50000') }}" class="btn btn-primary">Оформить вклад</a>
+        </div>
+    </div>
+
+    <div class="card_item">
+        <div class="prof">
+            <div class="prof__item">
+                <div class="prof__title">Сумма вклада</div>
+                до 200000 ₽
+            </div>
+
+            <div class="prof__item">
+                <div class="prof__title">Ставка</div>
+                7 %
+            </div>
+
+            <div class="prof__item">
+                <div class="prof__title">Оформление вклада</div>
+                до 10 мин
+            </div>
+
+        </div>
+        <div class="credit__btn" style="padding: 20px;">
+            <a href="{{ url_for('order_contribution', percent='7', m='200000') }}" class="btn btn-primary">Оформить вклад</a>
+        </div>
+    </div>
+</div>
+<br>
+
+{% endblock %}
