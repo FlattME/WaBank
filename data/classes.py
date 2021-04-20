@@ -179,10 +179,9 @@ class Сontributions(SqlAlchemyBase, UserMixin):
 
     d = date(*list(map(int, [str((int(d[0]) + 3))] + d[1:])))
     modifed_date = sqlalchemy.Column(sqlalchemy.DateTime, default=d)
-    modifed_date = sqlalchemy.Column(sqlalchemy.DateTime, default=d)
 
     def __repr__(self):
-        return f"{self.name} {self.id}, {self.sum_}, {self.percent}, {self.monthly_percent}"
+        return f"{self.name} {self.id}, {self.sum_}, {self.percent}"
 
 
 class Reviews(SqlAlchemyBase, UserMixin):
@@ -195,8 +194,3 @@ class Reviews(SqlAlchemyBase, UserMixin):
 
     def __repr__(self):
         return f"{self.name} {self.mail}, {self.message}"
-
-
-
-
-

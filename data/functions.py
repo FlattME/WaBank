@@ -47,26 +47,26 @@ def set_credit_cards_sum(id, moddifid_date, after_nonpercent_time, start_sum, su
         con.close()
 
 
-def update_transfers(tablename, card_name, sum_, znak, percent=0):
+def update_transfers(tablename, card_name, sum_, znak, id, percent=0):
     con = sqlite3.connect('db/users_db.sqlite')
     print(card_name)
     cur = con.cursor()
-    sum_d = cur.execute(f"SELECT sum_ FROM {tablename} WHERE name = '{card_name}'").fetchall()[0][0]
+    sum_d = cur.execute(f"SELECT sum_ FROM {tablename} WHERE name = '{card_name}' AND user_id = '{id}'").fetchall()[0][0]
     print(sum_d)
     print(sum_)
 
     # Получили результат запроса, который ввели в текстовое поле
     print(eval(f'{sum_d} {znak} {sum_ + ((percent * sum_)/100)}'))
     cur.execute(
-        f"UPDATE {tablename} SET sum_ = {eval(f'{sum_d} {znak} {sum_ + ((percent * sum_)/100)}')} WHERE name = '{card_name}'").fetchall()
+        f"UPDATE {tablename} SET sum_ = {eval(f'{sum_d} {znak} {sum_ + ((percent * sum_)/100)}')} WHERE name = '{card_name}' AND user_id = '{id}'").fetchall()
     con.commit()
     con.close()
 
 
-def check_credit_sum(tablename, credit_name):
+def check_credit_sum(tablename, credit_name, id):
     con = sqlite3.connect('db/users_db.sqlite')
     cur = con.cursor()
-    sum_d = cur.execute(f"SELECT sum_, start_sum FROM {tablename} WHERE name = '{credit_name}'").fetchall()[0]
+    sum_d = cur.execute(f"SELECT sum_, start_sum FROM {tablename} WHERE name = '{credit_name}' AND user_id = '{id}'").fetchall()[0]
     con.close()
     return sum_d
 
@@ -87,7 +87,7 @@ def set_all():
             cur = con.cursor()
             if credit[2] > (credit[3] - (credit[3] / 3)):
                 cur.execute(
-                    f"UPDATE credits SET sum_ = {check_credit_sum('credits', credit[0])[0] + ((check_credit_sum('credits', credit[0])[0] * credit[4]) / 100)}, percent = {credit[4] + credit[5]}, monthly_percent = {credit[4] + 1} WHERE name={credit[0]}").fetchall()
+                    f"UPDATE credits SET sum_ = {check_credit_sum('credits', credit[0])[0] + ((check_credit_sum('credits', credit[0])[0] * credit[4]) / 100)}, percent = {credit[4] + credit[5]}, monthly_percent = {credit[4] + 1} WHERE name={credit[0]} AND id = '{credit[1]}'").fetchall()
             else:
                 cur.execute(
                     f"UPDATE credits SET sum_ = {check_credit_sum('credits', credit[0])[0] + ((check_credit_sum('credits', credit[0])[0] * credit[4]) / 100)}").fetchall()
@@ -100,7 +100,7 @@ def set_all():
             cur = con.cursor()
             if c_card[2] > (c_card[3] - (c_card[3] / 24)):
                 cur.execute(
-                    f"UPDATE credit_cards SET sum_ = {check_credit_sum('credit_cards', c_card[0])[0] + ((check_credit_sum('credit_cards', c_card[0])[0] * c_card[-2]) / 100)}, percent = {c_card[-2] + c_card[-1]}, monthly_percent = {c_card[-1] + 1} WHERE name={c_card[0]}").fetchall()
+                    f"UPDATE credit_cards SET sum_ = {check_credit_sum('credit_cards', c_card[0])[0] + ((check_credit_sum('credit_cards', c_card[0])[0] * c_card[-2]) / 100)}, percent = {c_card[-2] + c_card[-1]}, monthly_percent = {c_card[-1] + 1} WHERE name={c_card[0]} AND user_id = '{c_card[1]}'").fetchall()
             else:
                   cur.execute(
                     f"UPDATE credit_cards SET sum_ = {check_credit_sum('credit_cards', c_card[0])[0] + ((check_credit_sum('credit_cards', c_card[0])[0] * c_card[-2]) / 100)}").fetchall()
@@ -111,19 +111,19 @@ def set_all():
         for cntrbtn in [(i.name, i.id, int(i.sum_), int(i.start_sum), i.card_number, i.secret_code, int(i.percent), int(i.monthly_percent)) for i in db_sess.query(CreditCards).all()]:
             con = sqlite3.connect('../db/users_db.sqlite')
             cur = con.cursor()
-            cur.execute(f"UPDATE credit_cards SET sum_ = {check_credit_sum('contributions', cntrbtn[0])[0] + ((check_credit_sum('contributions', cntrbtn[0])[0] * cntrbtn[-2]) / 100)} WHERE name={cntrbtn[0]}").fetchall()
+            cur.execute(f"UPDATE credit_cards SET sum_ = {check_credit_sum('contributions', cntrbtn[0])[0] + ((check_credit_sum('contributions', cntrbtn[0])[0] * cntrbtn[-2]) / 100)} WHERE name={cntrbtn[0]} AND user_id = '{cntrbtn[1]}'").fetchall()
 
             con.commit()
             con.close()
 
-        all_cards = [(card.name, card.sum_, card.card_number, card.secret_code, card.modifed_date) for card in db_sess.query(Cards).all()] + \
-                   [(card.name, card.sum_, card.card_number, card.secret_code, card.modifed_date) for card in
+        all_cards = [(card.name, card.sum_, card.card_number, card.secret_code, card.modifed_date, card.id) for card in db_sess.query(Cards).all()] + \
+                   [(card.name, card.sum_, card.card_number, card.secret_code, card.modifed_date, card.id) for card in
                     db_sess.query(CreditCards).all()] + \
-                   [(card.name, card.sum_, card.card_number, card.secret_code, card.modifed_date) for card in
+                   [(card.name, card.sum_, card.card_number, card.secret_code, card.modifed_date, card.id) for card in
                     db_sess.query(PensionСards).all()]
 
         for card in all_cards:
-            if calculate_age(card[-1]) > calculate_age(datetime.date(datetime.now())):
+            if calculate_age(card[-2]) > calculate_age(datetime.date(datetime.now())):
                 con = sqlite3.connect('../db/users_db.sqlite')
                 cur = con.cursor()
                 # Получили результат запроса, который ввели в текстовое поле
@@ -134,39 +134,39 @@ def set_all():
                 else:
                     g = 'pension_cards'
 
-                cur.execute(f"DELETE FROM {g} WHERE name = {card[0]}")
+                cur.execute(f"DELETE FROM {g} WHERE name = {card[0]} AND id = '{card[-1]}'")
                 con.commit()
                 con.close()
     return
 
 
-def update_pay_off(tablename, card_name, credit_name, sum_):
+def update_pay_off(tablename, card_name, credit_name, sum_, id):
     con = sqlite3.connect('db/users_db.sqlite')
 
     cur = con.cursor()
-    sum_d = cur.execute(f"SELECT sum_ FROM {tablename} WHERE name = '{card_name}'").fetchall()[0][0]
+    sum_d = cur.execute(f"SELECT sum_ FROM {tablename} WHERE name = '{card_name}' AND user_id = '{id}'").fetchall()[0][0]
 
     # Получили результат запроса, который ввели в текстовое поле
     cur.execute(
-        f"UPDATE {tablename} SET sum_ = {int(sum_d) - int(sum_)} WHERE name = '{card_name}'").fetchall()
+        f"UPDATE {tablename} SET sum_ = {int(sum_d) - int(sum_)} WHERE name = '{card_name}' AND user_id = '{id}'").fetchall()
     con.commit()
     con.close()
 
     con = sqlite3.connect('db/users_db.sqlite')
     cur = con.cursor()
-    sum_c = cur.execute(f"SELECT sum_ FROM credits WHERE name = '{credit_name}'").fetchall()[0][0]
+    sum_c = cur.execute(f"SELECT sum_ FROM credits WHERE name = '{credit_name}' AND user_id = '{id}'").fetchall()[0][0]
 
     cur.execute(
-        f"UPDATE credits SET sum_ = {sum_c - sum_} WHERE name = '{credit_name}'").fetchall()
+        f"UPDATE credits SET sum_ = {sum_c - sum_} WHERE name = '{credit_name}' AND user_id = '{id}'").fetchall()
     con.commit()
     con.close()
 
 
-def remove_credit(credit_name):
+def remove_credit(credit_name, id):
     con = sqlite3.connect('db/users_db.sqlite')
     cur = con.cursor()
 
-    cur.execute(f"DELETE FROM credit WHERE name = '{credit_name}'").fetchall()
+    cur.execute(f"DELETE FROM credit WHERE name = '{credit_name}' AND user_id = '{id}'").fetchall()
     con.commit()
     con.close()
 

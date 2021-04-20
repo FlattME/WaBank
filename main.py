@@ -81,7 +81,7 @@ def account_cards():
                     [(card.name, card.sum_, card.card_number, card.secret_code) for card in
                      db_sess.query(PensionСards).filter(PensionСards.user_id == current_user.id).all()]
         credits_ = [(credit.name, credit.sum_, credit.percent, credit.monthly_percent) for credit in db_sess.query(Credits).filter(Credits.user_id == current_user.id).all()]
-        o = [(ow.name, ow.sum_, ow.percent, ow.monthly_percent) for ow in db_sess.query(Сontributions).filter(Сontributions.user_id == current_user.id).all()]
+        o = [(ow.name, ow.sum_, ow.percent) for ow in db_sess.query(Сontributions).filter(Сontributions.user_id == current_user.id).all()]
         print(cards_)
         print(credits_)
         print(o)
@@ -129,24 +129,24 @@ def transfers():
                                                cards_=my_cards_, message='Недостаточно средств')
 
                     if 'Дебютовая' in card[0]:
-                        update_transfers('cards', card[0], form.transfer_amount.data, '-')
+                        update_transfers('cards', card[0], form.transfer_amount.data, '-', current_user.id)
 
                     elif 'Кредитная' in card[0]:
-                        update_transfers('credits', card[0], form.transfer_amount.data, '-')
+                        update_transfers('credits', card[0], form.transfer_amount.data, '-', current_user.id)
 
                     else:
 
-                        update_transfers('pension_cards', card[0], form.transfer_amount.data, '-')
+                        update_transfers('pension_cards', card[0], form.transfer_amount.data, '-', current_user.id)
 
                     for al in all_cards:
                         if form.recipient_input.data == al[2]:
 
                             if 'Дебютовая' in card[0]:
-                                update_transfers('cards', al[0], form.transfer_amount.data, '+')
+                                update_transfers('cards', al[0], form.transfer_amount.data, '+', current_user.id)
                             elif 'Кредитная' in card[0]:
-                                update_transfers('credits', al[0], form.transfer_amount.data, '+')
+                                update_transfers('credits', al[0], form.transfer_amount.data, '+', current_user.id)
                             else:
-                                update_transfers('pension_cards', al[0], form.transfer_amount.data, '+')
+                                update_transfers('pension_cards', al[0], form.transfer_amount.data, '+', current_user.id)
                     return render_template(
                         'transfers.html', form=form, options=options,
                         cards_=my_cards_, message='Перевод выполнен успешно')
@@ -180,12 +180,12 @@ def top_up():
                 if card[0] == form.transmitting_input.data:
 
                     if 'Дебютовая' in card[0]:
-                        update_transfers('cards', card[0], form.transfer_amount.data, '+')
+                        update_transfers('cards', card[0], form.transfer_amount.data, '+', current_user.id)
 
                     elif 'Кредитная' in card[0]:
-                        update_transfers('credits', card[0], form.transfer_amount.data, '+')
+                        update_transfers('credits', card[0], form.transfer_amount.data, '+', current_user.id)
                     else:
-                        update_transfers('pension_cards', card[0], form.transfer_amount.data, '+')
+                        update_transfers('pension_cards', card[0], form.transfer_amount.data, '+', current_user.id)
 
                     return render_template(
                         'top_up.html', form=form, options=options,
@@ -267,11 +267,11 @@ def order_credit():
             for card in my_cards_:
                 if card[0] == form.transfer_card.data:
                     if 'Дебютовая' in card[0]:
-                        update_transfers('cards', card[0], form.sum_.data, '-')
+                        update_transfers('cards', card[0], form.sum_.data, '-', current_user.id)
                     elif 'Кредитная' in card[0]:
-                        update_transfers('credits', card[0], form.sum_.data, '-')
+                        update_transfers('credits', card[0], form.sum_.data, '-', current_user.id)
                     else:
-                        update_transfers('pension_cards', card[0], form.sum_.data, '-')
+                        update_transfers('pension_cards', card[0], form.sum_.data, '-', current_user.id)
 
             name = f"Кредит {c}"
             credit = Credits(
@@ -321,11 +321,12 @@ def pay_off_credit():
 
         form.credit_name.choices = [(card_[0]) for card_ in my_credits]
         form.pay_off_card.choices = [(card_[0]) for card_ in my_cards]
-
+        print(21)
         if form.validate_on_submit():
+            print(11)
             for card in my_cards:
-
                 if card[0] == form.pay_off_card.data:
+                    print(3)
                     if form.transmitting_secret_code.data != str(card[-1]):
                         return render_template('transfers.html', form=form, options=options, cards_=my_cards,
                                                message='Неверный код безопасности')
@@ -334,16 +335,17 @@ def pay_off_credit():
                         return render_template(
                             'pay_off_credit.html', title='Оформление кредита',
                             form=form, options=options, message="Недостаточно средств")
+                    print(0)
                     if 'Дебютовая' in card[0]:
-                        update_pay_off('cards', card[0], form.credit_name.data, form.transfer_amount.data)
+                        update_pay_off('cards', card[0], form.credit_name.data, form.transfer_amount.data, current_user.id)
                     elif 'Пенсионная' in card[0]:
-                        update_pay_off('pension_cards', card[0], form.credit_name.data, form.transfer_amount.data)
+                        update_pay_off('pension_cards', card[0], form.credit_name.data, form.transfer_amount.data, current_user.id)
                     else:
-                        update_pay_off('credit_cards', card[0], form.credit_name.data, form.transfer_amount.data)
-
-                    credit_sum = check_credit_sum('credits', form.credit_name.data)[0]
+                        update_pay_off('credit_cards', card[0], form.credit_name.data, form.transfer_amount.data, current_user.id)
+                    print('142')
+                    credit_sum = check_credit_sum('credits', form.credit_name.data, current_user.id)[0]
                     if credit_sum <= 0:
-                        remove_credit(form.credit_name.data)
+                        remove_credit(form.credit_name.data, current_user.id)
                         return render_template(
                             'pay_off_credit.html',  options=options, form=form, my_cards=my_cards,
                             my_credits=my_credits, message='Перевод прошол успешно. Ваш кредит удален')
@@ -351,7 +353,6 @@ def pay_off_credit():
                         return render_template(
                             'pay_off_credit.html', options=options, form=form, my_cards=my_cards, my_credits=my_credits,
                             message=f'Перевод прошол успешно. Вам осталость выплатить {credit_sum}')
-
         return render_template(
             'pay_off_credit.html', options=options, form=form, my_cards=my_cards, my_credits=my_credits)
     else:
@@ -401,11 +402,11 @@ def order_contribution():
                     if card[0] == form.transfer_card.data:
 
                         if 'Дебютовая' in card[0]:
-                            update_transfers('cards', card[0], form.sum_.data, '-')
+                            update_transfers('cards', card[0], form.sum_.data, '-', current_user.id)
                         elif 'Кредитная' in card[0]:
-                            update_transfers('credits', card[0], form.sum_.data, '-')
+                            update_transfers('credits', card[0], form.sum_.data, '-', current_user.id)
                         else:
-                            update_transfers('pension_cards', card[0], form.sum_.data, '-')
+                            update_transfers('pension_cards', card[0], form.sum_.data, '-', current_user.id)
 
                         name = f"Вклад {c}"
                         contribution = Сontributions(

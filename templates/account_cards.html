@@ -2,11 +2,10 @@
 
 {% block content %}
 <meta charset="UTF-8">
-<h2 align="center">Мои карты кабинет</h2>
+<h2 align="center">Мои карты</h2>
 <div class="table_container">
     <h3 align="center">Карты</h3>
     <div id="accordion">
-        {{ massage }}
         {% if cards_|length == 0 %}
           <div class="inf">
             У вас нет карт
@@ -24,9 +23,9 @@
             <div id="collapse{{ loop.index }}" class="collapse" aria-labelledby="heading{{ loop.index }}" data-parent="#accordion">
               <div class="card-body">
                   <div class="item_card">
-                      <div class="card_name">{{ i[0] }}</div>
-                      <div class="card_sum">{{ i[1] }} руб.</div>
-                      <div class="card_number">{{ i[2] }}</div>
+                      <div class="card_name">Название: {{ i[0] }}</div>
+                      <div class="card_sum">Баланс: {{ i[1] }} руб.</div>
+                      <div class="card_number">Номер карты: {{ i[2] }}</div>
                   </div>
               </div>
             </div>
@@ -42,16 +41,16 @@
             У вас нет кредитов
           </div> 
         {% else %}
-          {% for i in cards_ %}
+          {% for i in credits_ %}
           <div class="card">
             <div class="card-header" id="heading{{ loop.index }}">
               <h5 class="mb-0">
-                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse{{ loop.index }}" aria-expanded="false" aria-controls="collapse{{ loop.index }}">
+                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#coapse{{ loop.index }}" aria-expanded="false" aria-controls="coapse{{ loop.index }}">
                   {{ i[0] }}
                 </button>
               </h5>
             </div>
-            <div id="collapse{{ loop.index }}" class="collapse" aria-labelledby="heading{{ loop.index }}" data-parent="#accordion">
+            <div id="coapse{{ loop.index }}" class="collapse" aria-labelledby="hding{{ loop.index }}" data-parent="#accordion">
               <div class="card-body">
                   <div class="item_card">
                       <div class="card_name">Название : {{ i[0] }}</div>
@@ -65,12 +64,11 @@
           </div>
           {% endfor %}
         {% endif %}
-      </div>
+    </div>
       
-      <h3 align="center">Вклады</h3>
+    <h3 align="center">Вклады</h3>
 
-
-      <div id="accordion">
+    <div id="accordion">
         {% if o|length == 0 %}
           <div class="inf">
             У вас нет вкладов
@@ -78,20 +76,19 @@
         {% else %}
           {% for i in o %}
           <div class="card">
-            <div class="card-header" id="heading{{ loop.index }}">
+            <div class="card-header" id="headn{{ loop.index }}">
               <h5 class="mb-0">
-                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse{{ loop.index }}" aria-expanded="false" aria-controls="collapse{{ loop.index }}">
+                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#cllps{{ loop.index }}" aria-expanded="false" aria-controls="cllps{{ loop.index }}">
                   {{ i[0] }}
                 </button>
               </h5>
             </div>
-            <div id="collapse{{ loop.index }}" class="collapse" aria-labelledby="heading{{ loop.index }}" data-parent="#accordion">
+            <div id="cllps{{ loop.index }}" class="collapse" aria-labelledby="headn{{ loop.index }}" data-parent="#accordion">
               <div class="card-body">
                   <div class="item_card">
                       <div class="card_name">Название : {{ i[0] }}</div>
-                      <div class="card_sum">Долг: {{ i[1] }} руб.</div>
+                      <div class="card_sum">Сумма: {{ i[1] }} руб.</div>
                       <div class="card_percent">Процент: {{ i[2] }} %</div>
-                      <div class="card_monthly_percent">Процент за неуплату: {{ i[2] }} %</div>
 
                   </div>
               </div>
@@ -99,8 +96,6 @@
           </div>
           {% endfor %}
         {% endif %}
-
-        
       </div>
 
 </div>

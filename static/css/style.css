@@ -249,6 +249,10 @@ a {
     color: #1d57c9;
 }
 
+h3 {
+    padding-bottom: 15px;
+}
+
 a:hover {
     color: #5e59fd;
 

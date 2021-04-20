@@ -18,6 +18,18 @@
             </div>
         </div>
 
+        <div class="transmitting_secret_code">
+            <label for="email">{{ form.transmitting_secret_code.label  }}</label>
+            {{ form.transmitting_secret_code(class="form-control", type="transmitting_secret_code") }}<br>
+            {% for error in form.transmitting_secret_code.errors %}
+                <p class="alert alert-danger" role="alert">
+            {{ error }} }}
+            </p>
+
+            {% endfor %}
+        </div>
+
+
         <div class="transfer_amount">
             <label for="email">{{ form.transfer_amount.label  }}</label>
             {{ form.transfer_amount(class="form-control", type="transfer_amount") }}<br>
