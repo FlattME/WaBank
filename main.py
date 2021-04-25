@@ -2,10 +2,11 @@ from flask import Flask, render_template, request, url_for, redirect
 # from flask_ngrok import run_with_ngrok
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from datetime import date, datetime
+import sqlite3
 
 from data import db_session
 from data.functions import rand, read_sqlfile, sent_mail, set_all, calculate_age, \
-    set_credit_sum, update_transfers, set_credit_cards_sum, update_pay_off, check_credit_sum, remove_credit
+    set_credit_sum, update_transfers, set_credit_cards_sum, update_pay_off, check_credit_sum, remove_credit, my_cards
 from data.classes import Users, Cards, CreditCards, PensionСards, Credits, Reviews, Сontributions
 from data.forms import RegisterForm, OrderCardForm, LoginForm, AccountForm, SupportForm,\
     OrderCreditForm, TransfersForm, TopUpForm, OrderCreditCardForm, PayOffCreditForm, OrderСontributionForm, AdminForm
@@ -74,14 +75,14 @@ def account():
 def account_cards():
     if current_user.is_authenticated:
         db_sess = db_session.create_session()
-        cards_ = [(card.name, card.sum_, card.card_number, card.secret_code) for card in
+        cards_ = [(card.name, card.sum_, card.card_number, card.secret_code, list(map(lambda x: x.split('|'), str(card.transfer_history).split(';')[1:]))) for card in
                      db_sess.query(Cards).filter(Cards.user_id == current_user.id).all()] + \
-                    [(card.name, card.sum_, card.card_number, card.secret_code) for card in
+                    [(card.name, card.sum_, card.card_number, card.secret_code, list(map(lambda x: x.split('|'), str(card.transfer_history).split(';')[1:]))) for card in
                      db_sess.query(CreditCards).filter(CreditCards.user_id == current_user.id).all()] + \
-                    [(card.name, card.sum_, card.card_number, card.secret_code) for card in
+                    [(card.name, card.sum_, card.card_number, card.secret_code, list(map(lambda x: x.split('|'), str(card.transfer_history).split(';')[1:]))) for card in
                      db_sess.query(PensionСards).filter(PensionСards.user_id == current_user.id).all()]
-        credits_ = [(credit.name, credit.sum_, credit.percent, credit.monthly_percent) for credit in db_sess.query(Credits).filter(Credits.user_id == current_user.id).all()]
-        o = [(ow.name, ow.sum_, ow.percent) for ow in db_sess.query(Сontributions).filter(Сontributions.user_id == current_user.id).all()]
+        credits_ = [(credit.name, credit.sum_, credit.percent, credit.monthly_percent, list(map(lambda x: x.split('|'), str(credit.transfer_history).split(';')[1:]))) for credit in db_sess.query(Credits).filter(Credits.user_id == current_user.id).all()]
+        o = [(ow.name, ow.sum_, ow.percent, list(map(lambda x: x.split('|'), str(ow.transfer_history).split(';')[1:]) )) for ow in db_sess.query(Сontributions).filter(Сontributions.user_id == current_user.id).all()]
         print(cards_)
         print(credits_)
         print(o)
@@ -127,26 +128,24 @@ def transfers():
                     if not (card[1] >= form.transfer_amount.data):
                         return render_template('transfers.html', form=form, options=options,
                                                cards_=my_cards_, message='Недостаточно средств')
-
+                    print(current_user.id)
                     if 'Дебютовая' in card[0]:
-                        update_transfers('cards', card[0], form.transfer_amount.data, '-', current_user.id)
+                        update_transfers('cards', card[2], form.transfer_amount.data, '-')
 
                     elif 'Кредитная' in card[0]:
-                        update_transfers('credits', card[0], form.transfer_amount.data, '-', current_user.id)
-
+                        update_transfers('credit_cards', card[2], form.transfer_amount.data, '-')
                     else:
-
-                        update_transfers('pension_cards', card[0], form.transfer_amount.data, '-', current_user.id)
+                        update_transfers('pension_cards', card[2], form.transfer_amount.data, '-')
 
                     for al in all_cards:
-                        if form.recipient_input.data == al[2]:
+                        if str(form.recipient_input.data) == str(al[2]):
 
-                            if 'Дебютовая' in card[0]:
-                                update_transfers('cards', al[0], form.transfer_amount.data, '+', current_user.id)
-                            elif 'Кредитная' in card[0]:
-                                update_transfers('credits', al[0], form.transfer_amount.data, '+', current_user.id)
+                            if 'Дебютовая' in al[0]:
+                                update_transfers('cards', al[2], form.transfer_amount.data, '+')
+                            elif 'Кредитная' in al[0]:
+                                update_transfers('credit_cards', al[2], form.transfer_amount.data, '+')
                             else:
-                                update_transfers('pension_cards', al[0], form.transfer_amount.data, '+', current_user.id)
+                                update_transfers('pension_cards', al[2], form.transfer_amount.data, '+')
                     return render_template(
                         'transfers.html', form=form, options=options,
                         cards_=my_cards_, message='Перевод выполнен успешно')
@@ -180,12 +179,12 @@ def top_up():
                 if card[0] == form.transmitting_input.data:
 
                     if 'Дебютовая' in card[0]:
-                        update_transfers('cards', card[0], form.transfer_amount.data, '+', current_user.id)
+                        update_transfers('cards', card[2], form.transfer_amount.data, '+')
 
                     elif 'Кредитная' in card[0]:
-                        update_transfers('credits', card[0], form.transfer_amount.data, '+', current_user.id)
+                        update_transfers('credits', card[2], form.transfer_amount.data, '+')
                     else:
-                        update_transfers('pension_cards', card[0], form.transfer_amount.data, '+', current_user.id)
+                        update_transfers('pension_cards', card[2], form.transfer_amount.data, '+')
 
                     return render_template(
                         'top_up.html', form=form, options=options,
@@ -202,11 +201,11 @@ def top_up():
 
 # Данные карты (после оформления)
 @app.route('/card_ready', methods=['GET', "POST"])
-def card_ready(card_name, modifed_date, pin='', secret_code='', card_number='', credit_sum='', credit_payment='', income_=''):
-    return render_template(
-        'card_ready.html', options=options, card_name=card_name, card_pin=pin,
+def card_ready(
+        card_name, modifed_date, pin='', secret_code='', card_number='', credit_sum='', credit_payment='', income_='', percent=''):
+    return render_template('card_ready.html', options=options, card_name=card_name, card_pin=pin,
         secret_code=secret_code, card_number=card_number, modifed_date=modifed_date,
-        credit_sum=credit_sum, credit_payment=credit_payment)
+        credit_sum=credit_sum, credit_payment=credit_payment, percent=percent, income_=income_)
 
 
 # Направления
@@ -267,11 +266,11 @@ def order_credit():
             for card in my_cards_:
                 if card[0] == form.transfer_card.data:
                     if 'Дебютовая' in card[0]:
-                        update_transfers('cards', card[0], form.sum_.data, '-', current_user.id)
+                        update_transfers('cards', card[2], form.sum_.data, '-')
                     elif 'Кредитная' in card[0]:
-                        update_transfers('credits', card[0], form.sum_.data, '-', current_user.id)
+                        update_transfers('credits', card[2], form.sum_.data, '-')
                     else:
-                        update_transfers('pension_cards', card[0], form.sum_.data, '-', current_user.id)
+                        update_transfers('pension_cards', card[2], form.sum_.data, '-')
 
             name = f"Кредит {c}"
             credit = Credits(
@@ -285,6 +284,7 @@ def order_credit():
                 place_of_work=form.place_of_work.data,
                 monthly_percent=int(monthly_percent),
                 percent=int(percent),
+                transfer_history='',
                 transfer_card=form.transfer_card.data,
                 user_id=current_user.id)
 
@@ -292,7 +292,7 @@ def order_credit():
             db_sess.commit()
             return card_ready(
                 name, datetime.date(datetime.now()), credit_sum=form.sum_.data,
-                credit_payment=str(int(form.sum_.data) / 24))
+                credit_payment=str(int(form.sum_.data) / 24), percent=percent)
 
         return render_template(
             'order_credit.html', title='Оформление кредита', form=form, options=options, cards_=my_cards_)
@@ -342,7 +342,7 @@ def pay_off_credit():
                         update_pay_off('pension_cards', card[0], form.credit_name.data, form.transfer_amount.data, current_user.id)
                     else:
                         update_pay_off('credit_cards', card[0], form.credit_name.data, form.transfer_amount.data, current_user.id)
-                    print('142')
+
                     credit_sum = check_credit_sum('credits', form.credit_name.data, current_user.id)[0]
                     if credit_sum <= 0:
                         remove_credit(form.credit_name.data, current_user.id)
@@ -402,11 +402,11 @@ def order_contribution():
                     if card[0] == form.transfer_card.data:
 
                         if 'Дебютовая' in card[0]:
-                            update_transfers('cards', card[0], form.sum_.data, '-', current_user.id)
+                            update_transfers('cards', card[2], form.sum_.data, '-')
                         elif 'Кредитная' in card[0]:
-                            update_transfers('credits', card[0], form.sum_.data, '-', current_user.id)
+                            update_transfers('credits', card[2], form.sum_.data, '-')
                         else:
-                            update_transfers('pension_cards', card[0], form.sum_.data, '-', current_user.id)
+                            update_transfers('pension_cards', card[2], form.sum_.data, '-')
 
                         name = f"Вклад {c}"
                         contribution = Сontributions(
@@ -418,6 +418,7 @@ def order_contribution():
                             vidan=form.vidan.data,
                             percent=int(percent),
                             transfer_card=form.transfer_card.data,
+                            transfer_history='',
                             user_id=current_user.id)
 
                         db_sess.add(contribution)
@@ -425,7 +426,7 @@ def order_contribution():
                         income_ = (int(form.sum_.data) * int(percent))/100
                         print(percent)
                         return card_ready(
-                            name, datetime.date(datetime.now()), percent=int(percent), income_=income_)
+                            name, datetime.date(datetime.now()), percent=percent, income_=str(income_))
             else:
                 return render_template(
                     'order_contribution.html', title='Оформление вклада', form=form, options=options, cards_=my_cards_, message='Неверная сумма')
@@ -480,6 +481,7 @@ def order_card():
                 service_price=service_price,
                 card_number=card_number,
                 privileges=privileges,
+                transfer_history='',
                 user_id=current_user.id
             )
 
@@ -541,6 +543,7 @@ def order_pension_card():
                     service_price=service_price,
                     card_number=card_number,
                     privileges=privileges,
+                    transfer_history='',
                     user_id=current_user.id
                 )
 
@@ -580,7 +583,7 @@ def order_credit_card():
             nonpercent = int(request.args.get('nonpercent'))
             monthly_percent = int(request.args.get('monthly_percent'))
             sum_ = int(request.args.get('sum_'))
-            if not (int(form.sum_.data) < 5000 or int(form.sum_.data) > sum_ ):
+            if not (int(form.sum_.data) < 5000 or int(form.sum_.data) > sum_):
                 term = int(request.args.get('term'))
 
                 pin = rand(4)
@@ -607,6 +610,7 @@ def order_credit_card():
                     pin=pin,
                     secret_code=secret_code,
                     card_number=card_number,
+                    transfer_history='',
                     user_id=current_user.id
                 )
                 print(123)
@@ -734,8 +738,9 @@ def admin():
     if current_user.is_authenticated:
         db_sess = db_session.create_session()
         is_admin = db_sess.query(Users).filter(Users.id == current_user.id and Users.admin).all()
-        if len(is_admin) == 1:
-            users = [(user.id, user.name, user.surname, user.address, user.email) for user in db_sess.query(Users).all()]
+        print(is_admin)
+        if is_admin:
+            users = [((user.id, user.name, user.surname, user.address, user.email, user.admin), my_cards(user.id)) for user in db_sess.query(Users).all()]
             print(users)
             if form.check_credits_and_contributions.data:
                 set_all()
@@ -743,9 +748,110 @@ def admin():
 
             return render_template('admin.html', form=form, options=options, users=users)
     else:
-        return render_template(
-            'info.html', options=options,
-            message='Сначала необходимо зарегестрироваться')
+        return render_template('info.html', options=options, message='Сначала необходимо зарегестрироваться')
+
+
+@app.route('/admin/rew')
+def admin_rew():
+    if current_user.is_authenticated:
+        db_sess = db_session.create_session()
+        is_admin = db_sess.query(Users).filter(Users.id == current_user.id and Users.admin).all()
+
+        if is_admin:
+            rews = [(i.name, i.mail, i.message) for i in db_sess.query(Reviews).all()]
+            print(rews)
+            return render_template('rew.html', options=options, rews=rews)
+    else:
+        return render_template('info.html', options=options, message='Сначала необходимо зарегестрироваться')
+
+
+@app.route('/conttrebend/<name>')
+def conttrebend(name):
+
+    if current_user.is_authenticated:
+
+        db_sess = db_session.create_session()
+        con = sqlite3.connect('db/users_db.sqlite')
+        print(name)
+
+        cur = con.cursor()
+        s, f = cur.execute(f"SELECT sum_, transfer_card FROM contributions WHERE name = '{name}' AND user_id = '{current_user.id}'").fetchall()[0]
+        s = int(s)
+        if 'Дебютовая' in f:
+            g, t = cur.execute(f"SELECT sum_, transfer_history FROM cards WHERE name = '{f}' AND user_id = '{current_user.id}'").fetchall()[0]
+        elif 'Пенсионная' in f:
+            g, t = cur.execute(f"SELECT sum_, transfer_history FROM pension_cards WHERE name = '{f}' AND user_id = '{current_user.id}'").fetchall()[0]
+        else:
+            g, t = cur.execute(f"SELECT sum_, transfer_history FROM credit_cards WHERE name = '{f}' AND user_id = '{current_user.id}'").fetchall()[0]
+        cur.execute(f"DELETE FROM contributions WHERE name = '{name}' AND user_id = '{current_user.id}'").fetchall()
+        print(s, f)
+        print(g)
+        g = int(g)
+
+        transfer_history = str(t).split(';')
+        if len(transfer_history) >= 7:
+            transfer_history = transfer_history[1:] + [
+                f"{str(datetime.now()).split('.')[0]}|{int(s)}|+"]
+        else:
+            transfer_history = transfer_history[:] + [
+                f"{str(datetime.now()).split('.')[0]}|{int(s)}|+"]
+
+        con.commit()
+        con.close()
+        con = sqlite3.connect('db/users_db.sqlite')
+
+        cur = con.cursor()
+        if 'Дебютовая' in f:
+            cur.execute(f"UPDATE cards SET sum_ = {s + g}, transfer_history = '{';'.join(transfer_history)}' WHERE user_id = '{current_user.id}' AND name = '{f}'")
+        elif 'Пенсионная' in f:
+            cur.execute(f"UPDATE pension_cards SET sum_ = {s + g}, transfer_history = '{';'.join(transfer_history)}' WHERE user_id = '{current_user.id}' AND name = '{f}'")
+        else:
+            cur.execute(f"UPDATE credit_cards SET sum_ = {s + g}, transfer_history = '{';'.join(transfer_history)}' WHERE user_id = '{current_user.id}' AND name = '{f}'")
+        con.commit()
+        con.close()
+
+        users = [((user.id, user.name, user.surname, user.address, user.email, user.admin), my_cards(user.id)) for
+                    user in db_sess.query(Users).all()]
+        print(users)
+
+        return render_template('info.html', options=options, message='Вклад закрыт')
+    else:
+        return render_template('info.html', options=options, message='Сначала необходимо зарегестрироваться')
+
+
+@app.route('/admin/block/<int:user_id>/<type_>/<card_name>/<block>')
+def admin_block_user(user_id, type_, card_name, block):
+    print(block)
+    block = eval(block)
+    print(block)
+    if current_user.is_authenticated:
+
+        db_sess = db_session.create_session()
+
+        print(user_id, card_name, type_, block)
+        is_admin = db_sess.query(Cards).filter(Users.id == user_id and Users.admin).all()
+
+        if is_admin:
+
+            users = [((user.id, user.name, user.surname, user.address, user.email, user.admin), my_cards(user.id)) for
+                     user in db_sess.query(Users).all()]
+            con = sqlite3.connect('db/users_db.sqlite')
+            print(users)
+
+            cur = con.cursor()
+            # Получили результат запроса, который ввели в текстовое поле
+
+            cur.execute(f"UPDATE {type_} SET block = {block} WHERE user_id = {user_id} AND name = {card_name}")
+            con.commit()
+            con.close()
+            users = [((user.id, user.name, user.surname, user.address, user.email, user.admin), my_cards(user.id)) for
+                     user in db_sess.query(Users).all()]
+            print(users)
+            if block:
+                return render_template('info.html', options=options, message='Карта заблокирована')
+            return render_template('info.html', options=options, message='Карта разблокирована')
+    else:
+        return render_template('info.html', options=options, message='Сначала необходимо зарегестрироваться')
 
 
 # Обновляем данные по кредитам

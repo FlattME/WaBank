@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<meta charset="UTF-8">
+<h2 align="center">Отзывы</h2>
+<div class="table_container">
+    {% for rew in rews %}
+        <div class="card_" style="padding: 20px; margin-bottom: 20px; background: #5e59fd; color: #fff;">
+            <h3>Имя: {{ rew[0] }}</h3>
+            <h4>Почта: {{ rew[1] }}</h4>
+            <p>Сообщение: {{ rew[2] }}</p>
+        </div>
+    {% endfor %}
+
+</div>
+<br>
+
+
+{% endblock %}

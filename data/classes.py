@@ -22,19 +22,14 @@ class Users(SqlAlchemyBase, UserMixin):
     address = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     email = sqlalchemy.Column(sqlalchemy.String, index=True, unique=True, nullable=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    percent = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
-    arrears = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
     modifed_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.date(datetime.now()))
     admin = sqlalchemy.Column(sqlalchemy.Boolean, nullable=True)
 
     def __repr__(self):
-        return f'{self.id} {self.surname} {self.name} {self.address} {self.email}'
+        return f'{self.id} {self.surname} {self.name} {self.address} {self.email} {self.admin}'
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
-
-    def set_arrears(self, arrears, percent, znak):
-        self.arrears = eval(f'{arrears} {znak} {(arrears * percent) / 100} ')
 
     def check_password(self, password):
         return check_password_hash(self.hashed_password, password)
@@ -53,15 +48,17 @@ class Cards(SqlAlchemyBase, UserMixin):
     card_number = sqlalchemy.Column(sqlalchemy.String(17), nullable=True)
     pin = sqlalchemy.Column(sqlalchemy.String(4), nullable=False)
     secret_code = sqlalchemy.Column(sqlalchemy.String(3), nullable=False)
-    service_price = sqlalchemy.Column(sqlalchemy.Integer, nullable=False)
+    service_price = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
     privileges = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    transfer_history = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    block = sqlalchemy.Column(sqlalchemy.Boolean, nullable=True, default=0)
     user_id = sqlalchemy.Column(sqlalchemy.String, sqlalchemy.ForeignKey("users.id"), nullable=True)
     d = str(datetime.date(datetime.now())).split('-')
     d = date(*list(map(int, [str((int(d[0]) + 3))] + d[1:])))
     modifed_date = sqlalchemy.Column(sqlalchemy.DateTime, default=d)
 
     def __repr__(self):
-        return f"{self.name} {self.id}, {self.sum_}, {self.card_number}, {self.secret_code}, {self.modifed_date}"
+        return f"{self.name}, {self.id}, {self.sum_}, {self.card_number}, {self.secret_code}, {self.transfer_history}, {self.block}, {self.modifed_date}"
 
     def set_pin(self, pin):
         self.hashed_pin = generate_password_hash(pin)
@@ -85,13 +82,15 @@ class PensionСards(SqlAlchemyBase, UserMixin):
     secret_code = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     service_price = sqlalchemy.Column(sqlalchemy.Integer, nullable=False)
     privileges = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    transfer_history = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    block = sqlalchemy.Column(sqlalchemy.Boolean, nullable=True, default=0)
     user_id = sqlalchemy.Column(sqlalchemy.String, sqlalchemy.ForeignKey("users.id"), nullable=True)
     d = str(datetime.date(datetime.now())).split('-')
     d = date(*list(map(int, [str((int(d[0]) + 3))] + d[1:])))
     modifed_date = sqlalchemy.Column(sqlalchemy.DateTime, default=d)
 
     def __repr__(self):
-        return f"{self.name} {self.id}, {self.sum_}, {self.card_number}, {self.secret_code}, {self.modifed_date}"
+        return f"{self.name}, {self.id}, {self.sum_}, {self.card_number}, {self.secret_code}, {self.transfer_history}, {self.block}, {self.modifed_date}"
 
     def set_pin(self, pin):
         self.hashed_pin = generate_password_hash(pin)
@@ -119,13 +118,15 @@ class CreditCards(SqlAlchemyBase, UserMixin):
     card_number = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     pin = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     secret_code = sqlalchemy.Column(sqlalchemy.String, nullable=False)
+    transfer_history = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    block = sqlalchemy.Column(sqlalchemy.Boolean, nullable=True, default=0)
     user_id = sqlalchemy.Column(sqlalchemy.String, sqlalchemy.ForeignKey("users.id"), nullable=True)
     d = str(datetime.date(datetime.now())).split('-')
     d = date(*list(map(int, [str((int(d[0]) + 3))] + d[1:])))
     modifed_date = sqlalchemy.Column(sqlalchemy.DateTime, default=d)
 
     def __repr__(self):
-        return f"{self.name} {self.id}, {self.sum_}, {self.card_number}, {self.secret_code}, {self.sum_}, {self.percent}, {self.monthly_percent}, {self.modifed_date}"
+        return f"{self.name}, {self.id}, {self.sum_}, {self.card_number}, {self.secret_code}, {self.sum_}, {self.percent}, {self.monthly_percent}, {self.transfer_history}, {self.block}, {self.modifed_date}"
 
     def set_pin(self, pin):
         self.hashed_pin = generate_password_hash(pin)
@@ -149,11 +150,13 @@ class Credits(SqlAlchemyBase, UserMixin):
     percent = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     monthly_percent = sqlalchemy.Column(sqlalchemy.Integer, nullable=False)
     transfer_card = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    transfer_history = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    block = sqlalchemy.Column(sqlalchemy.Boolean, nullable=True, default=0)
     user_id = sqlalchemy.Column(sqlalchemy.String, sqlalchemy.ForeignKey("users.id"), nullable=True)
     modifed_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.date(datetime.now()))
 
     def __repr__(self):
-        return f"{self.name} {self.id}, {self.sum_}, {self.start_sum}, {self.percent}, {self.monthly_percent}"
+        return f"{self.name}, {self.id}, {self.sum_}, {self.start_sum}, {self.percent}, {self.transfer_history}, {self.block}, {self.monthly_percent}"
 
     def set_pin(self, pin):
         self.hashed_pin = generate_password_hash(pin)
@@ -174,14 +177,15 @@ class Сontributions(SqlAlchemyBase, UserMixin):
     vidan = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     percent = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     transfer_card = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    transfer_history = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    block = sqlalchemy.Column(sqlalchemy.Boolean, nullable=True, default=0)
     user_id = sqlalchemy.Column(sqlalchemy.String, sqlalchemy.ForeignKey("users.id"), nullable=True)
     d = str(datetime.date(datetime.now())).split('-')
-
     d = date(*list(map(int, [str((int(d[0]) + 3))] + d[1:])))
     modifed_date = sqlalchemy.Column(sqlalchemy.DateTime, default=d)
 
     def __repr__(self):
-        return f"{self.name} {self.id}, {self.sum_}, {self.percent}"
+        return f"{self.name}, {self.id}, {self.sum_}, {self.percent}, {self.transfer_history}, {self.block}"
 
 
 class Reviews(SqlAlchemyBase, UserMixin):
@@ -193,4 +197,4 @@ class Reviews(SqlAlchemyBase, UserMixin):
     message = sqlalchemy.Column(sqlalchemy.String, nullable=False)
 
     def __repr__(self):
-        return f"{self.name} {self.mail}, {self.message}"
+        return f"{self.name}, {self.mail}, {self.message}"

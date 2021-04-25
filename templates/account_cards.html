@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <h2 align="center">Мои карты</h2>
 <div class="table_container">
+
     <h3 align="center">Карты</h3>
     <div id="accordion">
         {% if cards_|length == 0 %}
@@ -22,11 +23,31 @@
             </div>
             <div id="collapse{{ loop.index }}" class="collapse" aria-labelledby="heading{{ loop.index }}" data-parent="#accordion">
               <div class="card-body">
-                  <div class="item_card">
+                  <div class="item_card" style="display: flex;
+                  justify-content: space-between;
+                  padding-bottom: 15px;">
                       <div class="card_name">Название: {{ i[0] }}</div>
                       <div class="card_sum">Баланс: {{ i[1] }} руб.</div>
                       <div class="card_number">Номер карты: {{ i[2] }}</div>
                   </div>
+                  {% if i[4]|length > 0 %}
+                  <h3>История переводов:</h3>
+                  <div class="card_transfer_history">
+
+                    {% for h in i[4] %}
+                      
+                        <hr>
+                        <div class="h_date">Дата и время: {{ h[0] }}</div>
+                        {% if h[2] == '-'%}
+                          <div class="h_sum" style="color: #f00;">Сумма: - {{ h[1] }} руб.</div>
+                        {% else %}
+                          <div class="h_sum" style="color: #22c962;">Сумма: + {{ h[1] }} руб.</div>
+                        {% endif %}
+                      
+                      
+                    {% endfor %}
+                  </div>
+                  {% endif %}
               </div>
             </div>
           </div>
@@ -43,7 +64,7 @@
         {% else %}
           {% for i in credits_ %}
           <div class="card">
-            <div class="card-header" id="heading{{ loop.index }}">
+            <div class="card-header" id="hding{{ loop.index }}">
               <h5 class="mb-0">
                 <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#coapse{{ loop.index }}" aria-expanded="false" aria-controls="coapse{{ loop.index }}">
                   {{ i[0] }}
@@ -52,13 +73,32 @@
             </div>
             <div id="coapse{{ loop.index }}" class="collapse" aria-labelledby="hding{{ loop.index }}" data-parent="#accordion">
               <div class="card-body">
-                  <div class="item_card">
+                  <div class="item_card" style="display: flex;
+                  justify-content: space-between;
+                  padding-bottom: 15px;">
                       <div class="card_name">Название : {{ i[0] }}</div>
                       <div class="card_sum">Долг: {{ i[1] }} руб.</div>
                       <div class="card_percent">Процент: {{ i[2] }} %</div>
-                      <div class="card_monthly_percent">Процент за неуплату: {{ i[2] }} %</div>
-
+                      <div class="card_monthly_percent">Процент за неуплату: {{ i[3] }} %</div>
                   </div>
+                  {% if i[4]|length >= 0 %}
+                  <h3>История переводов:</h3>
+                  <div class="card_transfer_history">
+
+                    {% for h in i[4] %}
+                      
+                        <hr>
+                        <div class="h_date">Дата и время: {{ h[0] }}</div>
+                        {% if h[2] == '-'%}
+                          <div class="h_sum" style="color: #f00;">Сумма: - {{ h[1] }} руб.</div>
+                        {% else %}
+                          <div class="h_sum" style="color: #22c962;">Сумма: + {{ h[1] }} руб.</div>
+                        {% endif %}
+                      
+                      
+                    {% endfor %}
+                  </div>
+                {% endif %}
               </div>
             </div>
           </div>
@@ -67,7 +107,6 @@
     </div>
       
     <h3 align="center">Вклады</h3>
-
     <div id="accordion">
         {% if o|length == 0 %}
           <div class="inf">
@@ -85,18 +124,23 @@
             </div>
             <div id="cllps{{ loop.index }}" class="collapse" aria-labelledby="headn{{ loop.index }}" data-parent="#accordion">
               <div class="card-body">
-                  <div class="item_card">
+                  <div class="item_card" style="display: flex;
+                  justify-content: space-between;
+                  padding-bottom: 15px;">
                       <div class="card_name">Название : {{ i[0] }}</div>
                       <div class="card_sum">Сумма: {{ i[1] }} руб.</div>
                       <div class="card_percent">Процент: {{ i[2] }} %</div>
 
                   </div>
+                  <a href="/conttrebend/{{i[0]}}" class="btn btn-primary">
+                    Закрыть
+                  </a>
               </div>
             </div>
           </div>
           {% endfor %}
         {% endif %}
-      </div>
+    </div>
 
 </div>
 <br>

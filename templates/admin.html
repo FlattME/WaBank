@@ -1,18 +1,85 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Погашение кредита</h1>
+<h1>Управление</h1>
 
 <form action="" method="post">
     {{ form.hidden_tag() }}
     {{ form.csrf_token }}
     <p>{{ form.check_credits_and_contributions(type="submit", class="btn btn-primary") }}</p>
+</form>
     {{ message }}
-    <div class="users">
-        {% for user in users %}
-            <div class="usr_info" style="padding-top: 10px;">{{ user[0] }} {{ user[1] }} {{ user[2] }} {{ user[3] }} {{ user[4] }} </div>
-        {% endfor %}
+    <div id="accordion">
+        
+    
+    {% for user in users %}
+        {% if not user[0][5] %}
+            <div class="card">
+                <div class="card-header" id="hdn{{ loop.index }}">
+                    <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#cps{{ loop.index }}" aria-expanded="false" aria-controls="cps{{ loop.index }}">
+                        <div class="usr_info" style="padding-top: 10px;">{{ user[0][0] }} {{ user[0][1] }} {{ user[0][2] }} {{ user[0][3] }} {{ user[0][4] }} </div>
+                        </button>
+                    </h5>
+                </div>
+                <div id="cps{{ loop.index }}" class="collapse" aria-labelledby="hdn{{ loop.index }}" data-parent="#accordion">
+                    <div class="card-body">
+                    {% for card_ in user[1] %}
+                        <div class="card_">
+                        {% if card_|length == 0 %}
+                            <div>У пользователя нет карт</div>
+                        {% else %}
+                            
+                                <div class="item_card" style="display: flex; justify-content: space-between; padding-bottom: 15px;">
+                                    <div class="card_name">Название: {{ card_[0] }}</div>
+                                    <div class="card_sum">Баланс: {{ card_[1] }} руб.</div>
+                                    <div class="card_number">Номер карты: {{ card_[2] }}</div>
+                                </div>
+
+                                    {% if card_[4] == 1 %}
+
+                                        {% if 'Дебютовая' in card_[0] %}
+                                            <a href="admin/block/{{user[0][0]}}/'cards'/'{{ card_[0] }}'/False" class="btn btn-primary">
+                                                Разблокировать
+                                            </a>
+                                        {% elif 'Кредитная' in card_[0] %}
+                                            <a href="admin/block/{{user[0][0]}}/'credit_cards'/'{{ card_[0] }}'/False" class="btn btn-primary">
+                                                Разблокировать
+                                            </a>
+                                        {% else %}
+                                            <a href="admin/block/{{user[0][0]}}/'pension_cards'/'{{ card_[0] }}'/False" class="btn btn-primary">
+                                                Разблокировать
+                                            </a>
+                                        {% endif %}
+
+                                    {% else %}
+
+                                        {% if 'Дебютовая' in card_[0] %}
+                                            <a href="admin/block/{{user[0][0]}}/'cards'/'{{ card_[0] }}'/True" class="btn btn-primary">
+                                                Заблокировать
+                                            </a>
+                                        {% elif 'Кредитная' in card_[0] %}
+                                            <a href="admin/block/{{user[0][0]}}/'credit_cards'/'{{ card_[0] }}'/True" class="btn btn-primary">
+                                                Заблокировать
+                                            </a>
+                                        {% else %}
+                                            <a href="admin/block/{{user[0][0]}}/'pension_cards'/'{{ card_[0] }}'/True" class="btn btn-primary">
+                                                Заблокировать
+                                            </a>
+                                        {% endif %}
+
+                                    {% endif %}
+                           
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                </div>
+            </div> 
+        {% endif %}
+
+    {% endfor %}
     </div>
      
-</form>
+
 {% endblock %}
