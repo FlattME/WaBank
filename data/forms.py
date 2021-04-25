@@ -3,16 +3,15 @@ from wtforms import SubmitField, StringField, PasswordField, BooleanField,\
     TextAreaField, IntegerField, SelectField, TextField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
+from datetime import datetime
 
 
 class RegisterForm(FlaskForm):
     email = EmailField('Почта', validators=[DataRequired()])
-    password = PasswordField(
-        'Пароль', validators=[DataRequired(),
-                              Length(min=8, max=16, message='Пароль должен быть (от 8 до 16 символов)')])
+    password = PasswordField('Пароль', validators=[DataRequired(), Length(
+        min=8, max=16, message='Пароль должен быть (от 8 до 16 символов)')])
 
-    password_again = PasswordField(
-        'Повторите пароль', validators=[DataRequired(message='Пароли не совпадают'),
+    password_again = PasswordField('Повторите пароль', validators=[DataRequired(message='Пароли не совпадают'),
                                         EqualTo('password', message='Пароли не совпадают')])
 
     surname = StringField('Фамилия', validators=[DataRequired()])
@@ -39,13 +38,12 @@ class RegisterForm(FlaskForm):
     def validate_age(self, age):
         excluded_chars = ".1234567890"
         c = self.age.data.split(".")
-        if len(c) != 3 or len(c[0]) != 2 or len(c[1]) != 2 or len(c[2]) != 4:
-            raise ValidationError(
-                f"Неверный формат")
+        if len(c) != 3 or (int(c[0]) > 31 or len(c[0]) != 2) or (int(c[1]) > 12 or len(c[1]) != 2) or (
+                int(c[2]) > int(str(datetime.date(datetime.now())).split('-')[0]) or len(c[2]) != 4):
+            raise ValidationError(f"Неверный формат")
         for char in self.age.data:
             if not (char in excluded_chars):
-                raise ValidationError(
-                    f"Неверный формат")
+                raise ValidationError(f"Неверный формат")
 
 
 class LoginForm(FlaskForm):
@@ -83,9 +81,9 @@ class OrderCardForm(FlaskForm):
     def validate_vidan(self, vidan):
         excluded_chars = ".1234567890"
         c = self.vidan.data.split(".")
-        if len(c) != 3 or len(c[0]) != 2 or len(c[1]) != 2 or len(c[2]) != 4:
-            raise ValidationError(
-                f"Неверный формат")
+        if len(c) != 3 or (int(c[0]) > 31 or len(c[0]) != 2) or (int(c[1]) > 12 or len(c[1]) != 2) or (
+                int(c[2]) > int(str(datetime.date(datetime.now())).split('-')[0]) or len(c[2]) != 4):
+            raise ValidationError(f"Неверный формат")
 
         for char in self.vidan.data:
             if not (char in excluded_chars):
@@ -147,9 +145,9 @@ class OrderCreditCardForm(FlaskForm):
     def validate_vidan(self, vidan):
         excluded_chars = ".1234567890"
         c = self.vidan.data.split(".")
-        if len(c) != 3 or len(c[0]) != 2 or len(c[1]) != 2 or len(c[2]) != 4:
-            raise ValidationError(
-                f"Неверный формат")
+        if len(c) != 3 or (int(c[0]) > 31 or len(c[0]) != 2) or (int(c[1]) > 12 or len(c[1]) != 2) or (
+                int(c[2]) > int(str(datetime.date(datetime.now())).split('-')[0]) or len(c[2]) != 4):
+            raise ValidationError(f"Неверный формат")
         for char in self.vidan.data:
             if not (char in excluded_chars):
                 raise ValidationError(
@@ -200,7 +198,8 @@ class OrderCreditForm(FlaskForm):
     def validate_vidan(self, vidan):
         excluded_chars = ".1234567890"
         c = self.vidan.data.split(".")
-        if len(c) != 3 or len(c[0]) != 2 or len(c[1]) != 2 or len(c[2]) != 4:
+        if len(c) != 3 or (int(c[0]) > 31 or len(c[0]) != 2) or (int(c[1]) > 12 or len(c[1]) != 2) or (
+                int(c[2]) > int(str(datetime.date(datetime.now())).split('-')[0]) or len(c[2]) != 4):
             raise ValidationError(f"Неверный формат")
         for char in self.vidan.data:
             if not (char in excluded_chars):
@@ -212,7 +211,7 @@ class OrderСontributionForm(FlaskForm):
     tel = StringField('Номер телефона', validators=[DataRequired(), Length(min=11, max=11, message="11 цифр")])
     nomer = StringField(
         'Номер и серия паспорта', validators=[DataRequired(), Length(min=10, max=10, message="10 цифр")])
-    sum_ = IntegerField("Сумма кредита (руб.)", validators=[DataRequired()])
+    sum_ = IntegerField("Сумма вклада (руб.)", validators=[DataRequired()])
     vidan = StringField('Дата рождения (дд.мм.гггг)', validators=[DataRequired()])
     transfer_card = SelectField('Карта', choices={}, validators=[DataRequired()])
     transmitting_secret_code = StringField('Код безопасности', validators=[DataRequired()])
@@ -242,7 +241,7 @@ class OrderСontributionForm(FlaskForm):
     def validate_vidan(self, vidan):
         excluded_chars = ".1234567890"
         c = self.vidan.data.split(".")
-        if len(c) != 3 or len(c[0]) != 2 or len(c[1]) != 2 or len(c[2]) != 4:
+        if len(c) != 3 or (int(c[0]) > 31 or len(c[0]) != 2) or (int(c[1]) > 12 or len(c[1]) != 2) or (int(c[2]) > int(str(datetime.date(datetime.now())).split('-')[0]) or len(c[2]) != 4):
             raise ValidationError(f"Неверный формат")
         for char in self.vidan.data:
             if not (char in excluded_chars):
@@ -287,9 +286,9 @@ class SupportForm(FlaskForm):
                 raise ValidationError(
                     f"Только латиница")
 
-    def validate_name(self, name):
+    def validate_user_message(self, user_message):
         excluded_chars = "цукенгшщзхъфывапролджэячсмитьбюЙЦУКЕНГШЩЗХЪЫВАПРОЛДЖЭФЮБЬТИМСЧЯ"
-        for char in self.name.data:
+        for char in self.user_message.data:
             if char in excluded_chars:
                 raise ValidationError(
                     f"Только латиница")
