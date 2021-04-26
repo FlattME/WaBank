@@ -100,18 +100,18 @@ def transfers():
     if current_user.is_authenticated:
         db_sess = db_session.create_session()
 
-        my_cards_ = [(card.name, card.sum_, card.card_number, card.secret_code)
+        my_cards_ = [(card.name, card.sum_, card.card_number, card.secret_code, card.block)
                      for card in db_sess.query(Cards).filter(Cards.user_id == current_user.id).all()] + \
-                    [(card.name, card.sum_, card.card_number, card.secret_code)
+                    [(card.name, card.sum_, card.card_number, card.secret_code, card.block)
                      for card in db_sess.query(CreditCards).filter(CreditCards.user_id == current_user.id).all()] + \
-                    [(card.name, card.sum_, card.card_number, card.secret_code)
+                    [(card.name, card.sum_, card.card_number, card.secret_code, card.block)
                      for card in db_sess.query(PensionСards).filter(PensionСards.user_id == current_user.id).all()]
 
-        all_cards = [(card.name, card.sum_, card.card_number, card.secret_code)
+        all_cards = [(card.name, card.sum_, card.card_number, card.secret_code, card.block)
                      for card in db_sess.query(Cards).all()] + \
-                    [(card.name, card.sum_, card.card_number, card.secret_code)
+                    [(card.name, card.sum_, card.card_number, card.secret_code, card.block)
                      for card in db_sess.query(CreditCards).all()] + \
-                    [(card.name, card.sum_, card.card_number, card.secret_code)
+                    [(card.name, card.sum_, card.card_number, card.secret_code, card.block)
                      for card in db_sess.query(PensionСards).all()]
 
         form.transmitting_input.choices = [(card_[0]) for card_ in my_cards_]
@@ -119,9 +119,12 @@ def transfers():
         if form.validate_on_submit():
             for card in my_cards_:
                 if card[0] == form.transmitting_input.data:
-                    print(card[-1])
+                    print(card[4])
+                    if card[4]:
+                        return render_template('transfers.html', form=form, options=options, cards_=my_cards_,
+                                               message='Карта заблокирована')
 
-                    if form.transmitting_secret_code.data != str(card[-1]):
+                    if form.transmitting_secret_code.data != str(card[3]):
                         return render_template('transfers.html', form=form, options=options, cards_=my_cards_,
                                                message='Неверный код безопасности')
 
@@ -165,18 +168,22 @@ def top_up():
     if current_user.is_authenticated:
         db_sess = db_session.create_session()
 
-        my_cards_ = [(card.name, card.sum_, card.card_number, card.secret_code)
+        my_cards_ = [(card.name, card.sum_, card.card_number, card.secret_code, card.block)
                      for card in db_sess.query(Cards).filter(Cards.user_id == current_user.id).all()] + \
-                    [(card.name, card.sum_, card.card_number, card.secret_code)
+                    [(card.name, card.sum_, card.card_number, card.secret_code, card.block)
                      for card in db_sess.query(CreditCards).filter(CreditCards.user_id == current_user.id).all()] + \
-                    [(card.name, card.sum_, card.card_number, card.secret_code)
+                    [(card.name, card.sum_, card.card_number, card.secret_code, card.block)
                      for card in db_sess.query(PensionСards).filter(PensionСards.user_id == current_user.id).all()]
 
         form.transmitting_input.choices = [(card_[0]) for card_ in my_cards_]
-        print(my_cards_)
+        print(type(my_cards_))
         if form.validate_on_submit():
             for card in my_cards_:
                 if card[0] == form.transmitting_input.data:
+                    print(card[4])
+                    if card[4]:
+                        return render_template('info.html', form=form, options=options, cards_=my_cards_,
+                                               message='Карта заблокирована')
 
                     if 'Дебютовая' in card[0]:
                         update_transfers('cards', card[2], form.transfer_amount.data, '+')
@@ -309,11 +316,11 @@ def pay_off_credit():
     if current_user.is_authenticated:
         form = PayOffCreditForm()
         db_sess = db_session.create_session()
-        my_cards = [(card.name, card.sum_, card.card_number, card.secret_code) for card in
+        my_cards = [(card.name, card.sum_, card.card_number, card.secret_code, card.block) for card in
                     db_sess.query(Cards).filter(Cards.user_id == current_user.id).all()] + \
-                   [(card.name, card.sum_, card.card_number, card.secret_code) for card in
+                   [(card.name, card.sum_, card.card_number, card.secret_code, card.block) for card in
                     db_sess.query(CreditCards).filter(CreditCards.user_id == current_user.id).all()] + \
-                   [(card.name, card.sum_, card.card_number, card.secret_code) for card in
+                   [(card.name, card.sum_, card.card_number, card.secret_code, card.block) for card in
                     db_sess.query(PensionСards).filter(PensionСards.user_id == current_user.id).all()]
 
         my_credits = [(credit.name, credit.sum_, credit.percent)
@@ -321,13 +328,15 @@ def pay_off_credit():
 
         form.credit_name.choices = [(card_[0]) for card_ in my_credits]
         form.pay_off_card.choices = [(card_[0]) for card_ in my_cards]
-        print(21)
+
         if form.validate_on_submit():
-            print(11)
+
             for card in my_cards:
                 if card[0] == form.pay_off_card.data:
-                    print(3)
-                    if form.transmitting_secret_code.data != str(card[-1]):
+                    if card[4]:
+                        return render_template('transfers.html', options=options, message='Карта заблокирована')
+
+                    if form.transmitting_secret_code.data != str(card[3]):
                         return render_template('transfers.html', form=form, options=options, cards_=my_cards,
                                                message='Неверный код безопасности')
 
@@ -348,11 +357,11 @@ def pay_off_credit():
                         remove_credit(form.credit_name.data, current_user.id)
                         return render_template(
                             'pay_off_credit.html',  options=options, form=form, my_cards=my_cards,
-                            my_credits=my_credits, message='Перевод прошол успешно. Ваш кредит удален')
+                            my_credits=my_credits, message='Перевод прошел успешно. Ваш кредит удален')
                     else:
                         return render_template(
                             'pay_off_credit.html', options=options, form=form, my_cards=my_cards, my_credits=my_credits,
-                            message=f'Перевод прошол успешно. Вам осталость выплатить {credit_sum}')
+                            message=f'Перевод прошел успешно. Вам осталость выплатить {credit_sum}')
         return render_template(
             'pay_off_credit.html', options=options, form=form, my_cards=my_cards, my_credits=my_credits)
     else:
